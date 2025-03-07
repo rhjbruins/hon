@@ -13,6 +13,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from pyhon import Hon
 
 from .const import DOMAIN, PLATFORMS, MOBILE_ID, CONF_REFRESH_TOKEN
+from .ssl import update_ca_certificates
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -43,6 +44,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             test_data_path=Path(hass.config.config_dir),
             refresh_token=entry.data.get(CONF_REFRESH_TOKEN, ""),
         )
+
+        updated = await update_ca_certificates(hass)
+        if updated:
+            _LOGGER.error("Certificate loaded into Certifi CA bundle. Restart Home Assistant to apply changes.")
+            raise Exception("Certificate loaded into Certifi CA bundle. Restart Home Assistant to apply changes.")
 
         # Initialize Hon in executor
         hon = await hon.create()
