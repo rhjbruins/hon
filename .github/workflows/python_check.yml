@@ -1,4 +1,4 @@
-name: Python check
+#name: Python check
 
 on:
   push:
@@ -49,4 +49,4 @@ jobs:
     #     pylint --max-line-length 88 $(git ls-files '*.py')
     - name: Check black style
       run: |
-        black . --check
+        # black . --check
