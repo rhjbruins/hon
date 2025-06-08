@@ -55,6 +55,14 @@ SENSORS: dict[str, tuple[SensorEntityDescription, ...]] = {
         state_class=SensorStateClass.MEASUREMENT,
         translation_key="temperature"
         ),
+        HonSensorEntityDescription(key="remainingWaterLevel",
+        name="Remain Waterlevel",
+        icon="mdi:thermometer",
+        
+        device_class=SensorDeviceClass.BATTERY,
+        state_class=SensorStateClass.MEASUREMENT,
+        translation_key="percentage"
+        ),
     ),
     "WM": (
         HonSensorEntityDescription(
