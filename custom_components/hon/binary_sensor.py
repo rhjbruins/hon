@@ -30,20 +30,19 @@ BINARY_SENSORS: dict[str, tuple[HonBinarySensorEntityDescription, ...]] = {
             name="Sterilization Status",
             device_class=BinarySensorDeviceClass.RUNNING,
             on_value=0,
-            icon="mdi:ThermometerWater",),
+            icon="mdi:thermometer-water",),
             HonBinarySensorEntityDescription(
             key="attributes.parameters.electricHeatingCurrentStatus",
-            name="Backup heater",
+            name="Electric heater",
             device_class=BinarySensorDeviceClass.RUNNING,
             on_value=0,
-            icon="mdi:ElectricSwitch",),            
+            icon="mdi:electric-switch",),            
             HonBinarySensorEntityDescription(
             key="attributes.parameters.compressorHeatingCurrentStatus",
             name="Backup heater",
             device_class=BinarySensorDeviceClass.RUNNING,
             on_value=0,
-            icon="mdi:HeatingCoil",),
-            
+            icon="mdi:heating-coil",),
     ),
     "WM": (
         HonBinarySensorEntityDescription(
