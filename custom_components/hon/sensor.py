@@ -52,7 +52,8 @@ SENSORS: dict[str, tuple[SensorEntityDescription, ...]] = {
         icon="mdi:thermometer",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,)),
+        state_class=SensorStateClass.MEASUREMENT,translation_key="temperature"
+        )),
     "WM": (
         HonSensorEntityDescription(
             key="prPhase",
