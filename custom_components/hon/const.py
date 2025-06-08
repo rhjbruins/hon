@@ -38,6 +38,7 @@ APPLIANCES: dict[str, str] = {
     "TD": "Tumble Dryer",
     "WC": "Wine Cellar",
     "WD": "Washer Dryer",
+    "HW": "HotWater Boiler",
     "WH": "Water Heater",
     "WM": "Washing Machine",
 }
