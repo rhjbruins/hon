@@ -24,6 +24,27 @@ class HonBinarySensorEntityDescription(BinarySensorEntityDescription):
 
 
 BINARY_SENSORS: dict[str, tuple[HonBinarySensorEntityDescription, ...]] = {
+    "HW": (
+            HonBinarySensorEntityDescription(
+            key="attributes.parameters.sterilizationCurrentStatus",
+            name="Sterilization Status",
+            device_class=BinarySensorDeviceClass.RUNNING,
+            on_value=0,
+            icon="mdi:ThermometerWater",),
+            HonBinarySensorEntityDescription(
+            key="attributes.parameters.electricHeatingCurrentStatus",
+            name="Backup heater",
+            device_class=BinarySensorDeviceClass.RUNNING,
+            on_value=0,
+            icon="mdi:ElectricSwitch",),            
+            HonBinarySensorEntityDescription(
+            key="attributes.parameters.compressorHeatingCurrentStatus",
+            name="Backup heater",
+            device_class=BinarySensorDeviceClass.RUNNING,
+            on_value=0,
+            icon="mdi:HeatingCoil",),
+            
+    ),
     "WM": (
         HonBinarySensorEntityDescription(
             key="attributes.lastConnEvent.category",
