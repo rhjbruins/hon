@@ -47,13 +47,15 @@ class HonSensorEntityDescription(SensorEntityDescription):
 
 SENSORS: dict[str, tuple[SensorEntityDescription, ...]] = {
 
-    "HW":( HonSensorEntityDescription(key="temp",
+    "HW": ( HonSensorEntityDescription(key="temp",
         name="Boiler temp",
         icon="mdi:thermometer",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,translation_key="temperature"
-        )),
+        state_class=SensorStateClass.MEASUREMENT,
+        translation_key="temperature"
+        ),
+    ),
     "WM": (
         HonSensorEntityDescription(
             key="prPhase",
