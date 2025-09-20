@@ -31,6 +31,7 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
     session = aiohttp_client.async_get_clientsession(hass)
     if (config_dir := hass.config.config_dir) is None:
         raise ValueError("Missing Config Dir")
+
     hon = await Hon(
         email=entry.data[CONF_EMAIL],
         password=entry.data[CONF_PASSWORD],
@@ -53,10 +54,11 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.unique_id] = {"hon": hon, "coordinator": coordinator}
 
-    for platform in PLATFORMS:
-        hass.async_create_task(
-            hass.config_entries.async_forward_entry_setup(entry, platform)
-        )
+    # Forward config entry setup to all platforms
+    hass.async_create_task(
+        hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    )
+
     return True
 
 
