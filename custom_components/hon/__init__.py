@@ -31,32 +31,24 @@ CONFIG_SCHEMA = vol.Schema(
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Set up Hon from a config entry."""
     session = aiohttp_client.async_get_clientsession(hass)
+    if (config_dir := hass.config.config_dir) is None:
+        raise ValueError("Missing Config Dir")
 
-    try:
-        # Create Hon instance
-        hon = Hon(
-            email=entry.data[CONF_EMAIL],
-            password=entry.data[CONF_PASSWORD],
-            mobile_id=MOBILE_ID,
-            session=session,
-            test_data_path=Path(hass.config.config_dir),
-            refresh_token=entry.data.get(CONF_REFRESH_TOKEN, ""),
-        )
+    hon = await Hon(
+        email=entry.data[CONF_EMAIL],
+        password=entry.data[CONF_PASSWORD],
+        mobile_id=MOBILE_ID,
+        session=session,
+        test_data_path=Path(config_dir),
+        refresh_token=entry.data.get(CONF_REFRESH_TOKEN, ""),
+    ).create()
 
-        updated = await update_ca_certificates(hass)
-        if updated:
-            _LOGGER.error("Certificate loaded into Certifi CA bundle. Restart Home Assistant to apply changes.")
-            raise Exception("Certificate loaded into Certifi CA bundle. Restart Home Assistant to apply changes.")
-
-        # Initialize Hon in executor
-        hon = await hon.create()
-
-    except Exception as exc:
-        _LOGGER.error("Error creating Hon instance: %s", exc)
-        raise
-
+    # Save the new refresh token
+    hass.config_entries.async_update_entry(
+        entry, data={**entry.data, CONF_REFRESH_TOKEN: hon.api.auth.refresh_token}
+    )
+    
     async def async_update_data() -> dict[str, Any]:
         """Fetch data from API."""
         try:
@@ -108,27 +100,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Unload a config entry."""
-    hon = hass.data[DOMAIN][entry.unique_id]["hon"]
 
-    # Store refresh token
-    refresh_token = hon.api.auth.refresh_token
+async def async_unload_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool:
+    refresh_token = hass.data[DOMAIN][entry.unique_id]["hon"].api.auth.refresh_token
 
-    # Unsubscribe from updates
-    try:
-        hon.subscribe_updates(None)  # Remove subscription
-    except Exception as exc:
-        _LOGGER.warning("Error unsubscribing from updates: %s", exc)
-
-    # Update entry with latest refresh token
     hass.config_entries.async_update_entry(
         entry, data={**entry.data, CONF_REFRESH_TOKEN: refresh_token}
     )
-
-    # Unload platforms
-    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
-    if unload_ok:
-        hass.data[DOMAIN].pop(entry.unique_id)
-
-    return unload_ok
+    unload = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    if unload:
+        if not hass.data[DOMAIN]:
+            hass.data.pop(DOMAIN, None)
+    return unload
