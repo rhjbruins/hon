@@ -101,7 +101,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
 
-async def async_unload_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool:
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     refresh_token = hass.data[DOMAIN][entry.unique_id]["hon"].api.auth.refresh_token
 
     hass.config_entries.async_update_entry(
