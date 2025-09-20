@@ -100,15 +100,27 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return True
 
 
-
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    refresh_token = hass.data[DOMAIN][entry.unique_id]["hon"].api.auth.refresh_token
+    """Unload a config entry."""
+    hon = hass.data[DOMAIN][entry.unique_id]["hon"]
 
+    # Store refresh token
+    refresh_token = hon.api.auth.refresh_token
+
+    # Unsubscribe from updates
+    try:
+        hon.subscribe_updates(None)  # Remove subscription
+    except Exception as exc:
+        _LOGGER.warning("Error unsubscribing from updates: %s", exc)
+
+    # Update entry with latest refresh token
     hass.config_entries.async_update_entry(
         entry, data={**entry.data, CONF_REFRESH_TOKEN: refresh_token}
     )
-    unload = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
-    if unload:
-        if not hass.data[DOMAIN]:
-            hass.data.pop(DOMAIN, None)
-    return unload
+
+    # Unload platforms
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    if unload_ok:
+        hass.data[DOMAIN].pop(entry.unique_id)
+
+    return unload_ok
