@@ -21,6 +21,7 @@ PLATFORMS: list[str] = [
     "fan",
     "light",
     "lock",
+    "water_heater"
 ]
 
 APPLIANCES: dict[str, str] = {
@@ -127,6 +128,14 @@ WASHING_PR_PHASE: dict[int, str] = {
     25: "washing",
     26: "heating",
     27: "washing",
+}
+
+
+WH_MODE: dict[int,str]= {
+    0: "auto",
+    1: "eco",
+    2: "elec",
+    3: "vac"
 }
 
 MACH_MODE: dict[int, str] = {
